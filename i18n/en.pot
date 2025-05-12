@@ -1,0 +1,23 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"POT-Creation-Date: 2025-05-12T16:28:02.280Z\n"
+"PO-Revision-Date: 2025-05-12T16:28:02.281Z\n"
+
+msgid "Invalid date format, please use YYYY-MM-DD or YYYYMMDD"
+msgstr "Invalid date format, please use YYYY-MM-DD or YYYYMMDD"
+
+msgid "Date of Birth cannot be in the future"
+msgstr "Date of Birth cannot be in the future"
+
+msgctxt "Application title"
+msgid "__MANIFEST_APP_TITLE"
+msgstr "Date of Birth and Age formatting Capture Plugin"
+
+msgctxt "Application description"
+msgid "__MANIFEST_APP_DESCRIPTION"
+msgstr "A Capture Plugin to validate and format date of birth and age fields."
