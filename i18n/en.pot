@@ -5,26 +5,19 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2024-06-26T10:58:19.149Z\n"
-"PO-Revision-Date: 2024-06-26T10:58:19.149Z\n"
+"POT-Creation-Date: 2025-05-12T16:28:02.280Z\n"
+"PO-Revision-Date: 2025-05-12T16:28:02.281Z\n"
 
-msgid "Add"
-msgstr ""
+msgid "Invalid date format, please use YYYY-MM-DD or YYYYMMDD"
+msgstr "Invalid date format, please use YYYY-MM-DD or YYYYMMDD"
 
-msgid "List"
-msgstr ""
+msgid "Date of Birth cannot be in the future"
+msgstr "Date of Birth cannot be in the future"
 
-msgid "Back"
-msgstr ""
+msgctxt "Application title"
+msgid "__MANIFEST_APP_TITLE"
+msgstr "Date of Birth and Age formatting Capture Plugin"
 
-msgid "Help"
-msgstr ""
-
-msgid "Hello {{name}}"
-msgstr ""
-
-msgid "Detail page"
-msgstr ""
-
-msgid "Section"
-msgstr ""
+msgctxt "Application description"
+msgid "__MANIFEST_APP_DESCRIPTION"
+msgstr "A Capture Plugin to validate and format date of birth and age fields."

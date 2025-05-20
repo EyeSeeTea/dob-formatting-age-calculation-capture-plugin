@@ -1,77 +1,43 @@
-## Setup
+## Date of Birth and Age formatting Capture Plugin
 
-```
-$ nvm use # uses node version in .nvmrc
-$ yarn install
-```
+Validates and format a `dateOfBirth` field, and auto-populates the `age` field.
 
-## Build
+This plugin does not include any visible UI element. It detects changes to the `dateOfBirth` field.
 
-Build a production distributable DHIS2 zip file:
+- If it is invalid, it marks the field with an error.
+- If it is valid, calculates and sets the `age` field.
 
-```
-$ yarn build
-```
+A Date of Birth is considered valid if it is a valid date with the format `YYYY-MM-DD` or `YYYYMMDD` and is not in the future.
+If the Date of Birth is entered as `YYYYMMDD` it is reformatted as `YYYY-MM-DD` for consistency.
 
-## Development
+### How to use
 
-Copy `.env` to `.env.local` and configure DHIS2 instance to use. Then start the development server:
+1. Install plugin `.zip` file
+2. Download and install the Tracker configurator app from the _App management application_ or from the [App hub](https://apps.dhis2.org/app/85d156b7-6e3f-43f0-be57-395449393f7d).
+3. Follow the instructions in the Tracker configurator app to configure the plugin.
+4. Open the Capture app and create or edit the configured entity.
 
-```
-$ yarn start
-```
+### Development
 
-Now in your browser, go to `http://localhost:8081`.
+1. `yarn install`
+2. `yarn start`
+3. Configure the plugin in Tracker Plugin Configurator with "Add Local Plugin" -> url: `http://localhost:3000/plugin.html`.
 
-## Tests
+### Generate a release
 
-```
-$ yarn test
-```
+1. `yarn install`
+2. Update `version` in `package.json` if required
+3. `yarn build`
 
-## Some development tips
+The output will be the `build/bundle/dob-formatting-age-calculation-capture-plugin-{version}.zip` file, ready to upload in App Management -> Manual Install.
 
-### Clean architecture folder structure
+### Configuration
 
--   `src/domain`: Domain layer of the app (entities, use cases, repository definitions)
--   `src/data`: Data of the app (repository implementations)
--   `src/webapp/pages`: Main React components.
--   `src/webapp/components`: React components.
--   `src/utils`: Misc utilities.
--   `i18n/`: Contains literal translations (gettext format)
--   `public/`: General non-React webapp resources.
+The plugin expects three tracked entity attributes to be configured in the field map. Please configure this in the Tracker configurator app.
 
-## Data structures
+Example
 
--   `Future.ts`: Async values, similar to promises, but cancellables and with type-safe errors.
--   `Collection.ts`: Similar to Lodash, provides a wrapper over JS arrays.
--   `Obj.ts`: Similar to Lodash, provides a wrapper over JS objects.
--   `HashMap.ts`: Similar to ES6 map, but immutable.
--   `Struct.ts`: Base class for typical classes with attributes. Features: create, update.
--   `Either.ts`: Either a success value or an error.
-
-## Docs
-
-We use [TypeDoc](https://typedoc.org/example/):
-
-```
-$ yarn generate-docs
-```
-
-### i18n
-
-Update i18n .po files from `i18n.t(...)` calls in the source code:
-
-```
-$ yarn localize
-```
-
-### Scripts
-
-Check the example script, entry `"script-example"`in `package.json`->scripts and `src/scripts/example.ts`.
-
-### Misc Notes
-
--   Requests to DHIS2 will be transparently proxied (see `vite.config.ts` -> `server.proxy`) from `http://localhost:8081/dhis2/xyz` to `${VITE_DHIS2_BASE_URL}/xyz`. This prevents CORS and cross-domain problems.
-
--   You can use `.env` variables within the React app: `const value = import.meta.env.NAME;`
+| Attribute ID | Plugin alias | Type |
+| ------------ | ------------ | ---- |
+| w75KJ2mc4zz  | dateOfBirth  | Text |
+| zDhUuAYrxNC  | age          | Text |
