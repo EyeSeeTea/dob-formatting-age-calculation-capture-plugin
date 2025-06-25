@@ -1,8 +1,12 @@
-## Date of Birth and Age formatting Capture Plugin
+## Date of Birth and Age formatting Capture Plugin (with date known support)
 
-Validates and format a `dateOfBirth` field, and auto-populates the `age` field.
+if `isDateOfBirthKnown` is unset: `dateOfBirth` and `age` are hidden.
+if `isDateOfBirthKnown` is 'YES': Validates and format a `dateOfBirth` field, and auto-populates the `age` field (disabled).
+if `isDateOfBirthKnown` is 'NO': enables `age`, disables `dateOfBirth` and and gets automatically set to the first day of January of the year that makes the age valid (e.g. if Age entered is 22, Date of Birth would be 01/01/2003)
 
-This plugin does not include any visible UI element. It detects changes to the `dateOfBirth` field.
+This plugin does not include any visible UI element. It detects changes to the fields.
+
+NOTE: Disabling and hiding fields is not supported by the Plugin API at the moment - it should be handled with program rules
 
 - If it is invalid, it marks the field with an error.
 - If it is valid, calculates and sets the `age` field.
@@ -29,7 +33,7 @@ If the Date of Birth is entered as `YYYYMMDD` it is reformatted as `YYYY-MM-DD` 
 2. Update `version` in `package.json` if required
 3. `yarn build`
 
-The output will be the `build/bundle/dob-formatting-age-calculation-capture-plugin-{version}.zip` file, ready to upload in App Management -> Manual Install.
+The output will be the `build/bundle/dob-formatting-age-calculation-wdk-capture-plugin-{version}.zip` file, ready to upload in App Management -> Manual Install.
 
 ### Configuration
 
@@ -37,7 +41,8 @@ The plugin expects three tracked entity attributes to be configured in the field
 
 Example
 
-| Attribute ID | Plugin alias | Type |
-| ------------ | ------------ | ---- |
-| w75KJ2mc4zz  | dateOfBirth  | Text |
-| zDhUuAYrxNC  | age          | Text |
+| Attribute ID | Plugin alias | Type   |
+| ------------ | ------------ | ------ |
+| w75KJ2mc4zz  | dateOfBirth  | Text   |
+| zDhUuAYrxNC  | age          | Text   |
+| zDhUuAYrxNC  | isDobKnown   | Yes/No |
