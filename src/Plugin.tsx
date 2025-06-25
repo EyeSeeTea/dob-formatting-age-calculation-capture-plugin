@@ -40,7 +40,7 @@ const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
         },
       });
     },
-    []
+    [propsFromParent]
   );
 
   React.useEffect(() => {
@@ -84,7 +84,7 @@ const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
         });
       }
     }
-  }, [propsFromParent.values.dateOfBirth, isDobKnown]);
+  }, [propsFromParent.values.dateOfBirth, isDobKnown, setError]);
 
   React.useEffect(() => {
     if (isDobKnown === undefined || isDobKnown === true) {
@@ -108,7 +108,7 @@ const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
         touched: true,
       },
     });
-  }, [propsFromParent.values.age, isDobKnown]);
+  }, [propsFromParent.values.age, isDobKnown, setError]);
   return <div></div>;
 };
 
