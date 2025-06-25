@@ -9,6 +9,7 @@ import { formatDate } from "./utils/formatDate";
 import i18n from "@dhis2/d2-i18n";
 import { calculateAge } from "./utils/calculateAge";
 import { calculateDob } from "./utils/calculateDob";
+import { dateToString } from "./utils/dateToString";
 
 const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
   const isDobKnown =
@@ -90,6 +91,9 @@ const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
     if (isDobKnown === undefined || isDobKnown === true) {
       return;
     }
+    if (propsFromParent.values.age === undefined) {
+      return;
+    }
     const age = parseInt(propsFromParent.values.age);
     if ((propsFromParent.values.age !== undefined && isNaN(age)) || age < 0) {
       setError(
@@ -102,7 +106,7 @@ const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
     const calculatedDob = calculateDob(age);
     propsFromParent.setFieldValue({
       fieldId: PluginFields.dateOfBirth,
-      value: calculatedDob.toISOString().split("T")[0], // format to YYYY-MM-DD
+      value: dateToString(calculatedDob),
       options: {
         valid: true,
         touched: true,
