@@ -1,118 +1,120 @@
 import "./index.css";
 import React from "react";
-import {
-  IDataEntryPluginProps,
-  PluginField,
-  PluginFields,
-} from "./Plugin.types";
+import { IDataEntryPluginProps, PluginFields } from "./Plugin.types";
 import { formatDate } from "./utils/formatDate";
 import i18n from "@dhis2/d2-i18n";
 import { calculateAge } from "./utils/calculateAge";
 import { calculateDob } from "./utils/calculateDob";
 import { dateToString } from "./utils/dateToString";
+import { useSetError } from "./hooks/useSetError";
+import { useEffectAfterMount } from "./hooks/useEffectAfterMount";
+
+const MAX_AGE = 125; // Maximum age allowed
+const MIN_DOB = new Date("1900-01-01").getTime(); // Minimum date of birth allowed
 
 const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
-  const isDobKnown =
-    propsFromParent.values.isDobKnown === undefined
-      ? undefined
-      : propsFromParent.values.isDobKnown === "true";
+  const { isDobKnown, age, dateOfBirth } = propsFromParent.values as {
+    isDobKnown?: "true" | "false" | undefined;
+    age?: string;
+    dateOfBirth?: string;
+  };
 
-  const setError = React.useCallback(
-    (field: PluginField, value: string, error: string) => {
-      // HACK: set the value twice with different values to trigger the error message
-      // If this is not done, the error message will be show only after blurring the next field
-      // tested with Capture 101.32.5
+  const setError = useSetError(propsFromParent);
+
+  const setAge = React.useCallback(
+    (age: string | undefined) => {
       propsFromParent.setFieldValue({
-        fieldId: field,
-        value: value + " ",
+        fieldId: PluginFields.age,
+        value: age ?? "",
         options: {
-          valid: false,
+          valid: true,
           touched: true,
-          error,
-        },
-      });
-      propsFromParent.setFieldValue({
-        fieldId: field,
-        value: value,
-        options: {
-          valid: false,
-          touched: true,
-          error,
         },
       });
     },
     [propsFromParent]
   );
 
-  React.useEffect(() => {
-    if (!isDobKnown) {
-      return;
-    }
+  const setDob = React.useCallback(
+    (dob: string | undefined) => {
+      propsFromParent.setFieldValue({
+        fieldId: PluginFields.dateOfBirth,
+        value: dob ?? "",
+        options: {
+          valid: true,
+          touched: true,
+        },
+      });
+    },
+    [propsFromParent]
+  );
 
-    const inputDateOfBirth = propsFromParent.values.dateOfBirth;
-    const formattedDateOfBirth = formatDate(inputDateOfBirth);
-    if (inputDateOfBirth) {
-      if (!formattedDateOfBirth) {
-        setError(
-          PluginFields.dateOfBirth,
-          inputDateOfBirth,
-          i18n.t("Invalid date format, please use YYYY-MM-DD or YYYYMMDD")
-        );
-      } else if (
-        new Date(formattedDateOfBirth).getTime() > new Date().getTime()
-      ) {
-        setError(
-          PluginFields.dateOfBirth,
-          inputDateOfBirth,
-          i18n.t("Date of Birth cannot be in the future")
-        );
-      } else {
-        propsFromParent.setFieldValue({
-          fieldId: PluginFields.dateOfBirth,
-          value: formattedDateOfBirth,
-          options: {
-            valid: true,
-            touched: true,
-          },
-        });
-        propsFromParent.setFieldValue({
-          fieldId: PluginFields.age,
-          value: calculateAge(formattedDateOfBirth) + "", // setting an integer seems to cause an error
-          options: {
-            valid: true,
-            touched: true,
-          },
-        });
-      }
+  useEffectAfterMount(() => {
+    // reset age and dateOfBirth when isDobKnown is undefined
+    if (isDobKnown === undefined) {
+      setDob(undefined);
+      setAge(undefined);
     }
-  }, [propsFromParent.values.dateOfBirth, isDobKnown, setError]);
+  }, [isDobKnown, setAge, setDob]);
 
   React.useEffect(() => {
-    if (isDobKnown === undefined || isDobKnown === true) {
+    if (isDobKnown === undefined || isDobKnown === "false") {
       return;
     }
-    if (propsFromParent.values.age === undefined) {
+    if (!dateOfBirth) {
       return;
     }
-    const age = parseInt(propsFromParent.values.age);
-    if ((propsFromParent.values.age !== undefined && isNaN(age)) || age < 0) {
+    const formattedDateOfBirth = formatDate(dateOfBirth);
+    if (!formattedDateOfBirth) {
+      setError(
+        PluginFields.dateOfBirth,
+        dateOfBirth,
+        i18n.t("Invalid date format, please use YYYY-MM-DD or YYYYMMDD")
+      );
+    } else if (
+      new Date(formattedDateOfBirth).getTime() > new Date().getTime()
+    ) {
+      setError(
+        PluginFields.dateOfBirth,
+        dateOfBirth,
+        i18n.t("Date of Birth cannot be in the future")
+      );
+    } else if (new Date(formattedDateOfBirth).getTime() < MIN_DOB) {
+      setError(
+        PluginFields.dateOfBirth,
+        dateOfBirth,
+        i18n.t("Date of Birth cannot be previous to 1900-01-01")
+      );
+    } else {
+      setDob(formattedDateOfBirth);
+      setAge(
+        calculateAge(formattedDateOfBirth) + "" // setting an integer seems to cause an error
+      );
+    }
+  }, [dateOfBirth, isDobKnown, setError, setDob, setAge]);
+
+  React.useEffect(() => {
+    if (isDobKnown === undefined || isDobKnown === "true") {
+      return;
+    }
+    if (age === undefined) {
+      return;
+    }
+    const ageParsed = parseInt(age);
+    if ((ageParsed !== undefined && isNaN(ageParsed)) || ageParsed < 0) {
       setError(
         PluginFields.age,
-        propsFromParent.values.age,
+        age,
         i18n.t("Age must be a valid positive integer number")
       );
-      return;
+    } else if (ageParsed > MAX_AGE) {
+      setError(PluginFields.age, age, i18n.t("Age cannot be greater than 125"));
+    } else {
+      const calculatedDob = calculateDob(ageParsed);
+      setDob(dateToString(calculatedDob));
     }
-    const calculatedDob = calculateDob(age);
-    propsFromParent.setFieldValue({
-      fieldId: PluginFields.dateOfBirth,
-      value: dateToString(calculatedDob),
-      options: {
-        valid: true,
-        touched: true,
-      },
-    });
-  }, [propsFromParent.values.age, isDobKnown, setError]);
+  }, [age, isDobKnown, setError, setDob]);
+
   return <div></div>;
 };
 
