@@ -1,13 +1,14 @@
 import { DateFormat } from "../DateFormat";
 
+const formatters = {
+  [DateFormat.YYYYMMDD]: formatDateYYYYMMDD,
+  [DateFormat.MMDDYYYY]: formatDateMMDDYYYY,
+};
+
 export function formatDate(
   format: DateFormat,
   dateString: string
 ): string | null {
-  const formatters = {
-    [DateFormat.YYYYMMDD]: formatDateYYYYMMDD,
-    [DateFormat.MMDDYYYY]: formatDateMMDDYYYY,
-  };
   return formatters[format](dateString);
 }
 
