@@ -4,6 +4,9 @@ import { IDataEntryPluginProps, PluginFields } from "./Plugin.types";
 import { formatDate } from "./utils/formatDate";
 import i18n from "@dhis2/d2-i18n";
 import { calculateAge } from "./utils/calculateAge";
+import { DateFormat } from "./DateFormat";
+
+const dateFormat: DateFormat = DateFormat.MMDDYYYY; // TODO: make this configurable
 
 const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
   const setError = (value: string, error: string) => {
@@ -30,15 +33,21 @@ const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
     });
   };
 
+  const formatErrors = {
+    [DateFormat.YYYYMMDD]: i18n.t(
+      "Invalid date format, please use YYYY-MM-DD or YYYYMMDD"
+    ),
+    [DateFormat.MMDDYYYY]: i18n.t(
+      "Invalid date format, please use MM-DD-YYYY, MMDDYYYY or YYYY-MM-DD"
+    ),
+  };
+
   React.useEffect(() => {
     const inputDateOfBirth = propsFromParent.values.dateOfBirth;
-    const formattedDateOfBirth = formatDate(inputDateOfBirth);
+    const formattedDateOfBirth = formatDate(dateFormat, inputDateOfBirth);
     if (inputDateOfBirth) {
       if (!formattedDateOfBirth) {
-        setError(
-          inputDateOfBirth,
-          i18n.t("Invalid date format, please use YYYY-MM-DD or YYYYMMDD")
-        );
+        setError(inputDateOfBirth, formatErrors[dateFormat]);
       } else if (
         new Date(formattedDateOfBirth).getTime() > new Date().getTime()
       ) {

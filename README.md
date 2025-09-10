@@ -7,8 +7,10 @@ This plugin does not include any visible UI element. It detects changes to the `
 - If it is invalid, it marks the field with an error.
 - If it is valid, calculates and sets the `age` field.
 
-A Date of Birth is considered valid if it is a valid date with the format `YYYY-MM-DD` or `YYYYMMDD` and is not in the future.
-If the Date of Birth is entered as `YYYYMMDD` it is reformatted as `YYYY-MM-DD` for consistency.
+A Date of Birth is considered valid if it is a valid date with the format `YYYY-MM-DD`, `MMDDYYYY` or `MM-DD-YYYY` and is not in the future.
+Date of Birth values reformatted as `YYYY-MM-DD` for consistency and compatibility with the backend.
+
+NOTE: To support only `YYYY-MM-DD`or `YYYYMMDD` formats, change `dateFormat` in `Plugin.tsx` and rebuild. In the future, this could be made configurable when adding the plugin in tracker-plugin-configurator app.
 
 ### How to use
 
