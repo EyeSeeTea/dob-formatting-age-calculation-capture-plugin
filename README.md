@@ -1,7 +1,7 @@
 ## Date of Birth and Age formatting Capture Plugin (with date known support)
 
 if `isDateOfBirthKnown` is unset: `dateOfBirth` and `age` are hidden.
-if `isDateOfBirthKnown` is 'YES': Validates and format a `dateOfBirth` field, and auto-populates the `age` field (disabled).
+if `isDateOfBirthKnown` is 'YES': Validates and format a `dateOfBirth` field, and auto-populates the `age` field (disabled) and the `ageInMonths` field (disabled).
 if `isDateOfBirthKnown` is 'NO': enables `age`, disables `dateOfBirth` and and gets automatically set to the first day of January of the year that makes the age valid (e.g. if Age entered is 22, Date of Birth would be 01/01/2003)
 
 This plugin does not include any visible UI element. It detects changes to the fields.
@@ -9,7 +9,7 @@ This plugin does not include any visible UI element. It detects changes to the f
 NOTE: Disabling and hiding fields is not supported by the Plugin API at the moment - it should be handled with program rules
 
 - If it is invalid, it marks the field with an error.
-- If it is valid, calculates and sets the `age` field.
+- If it is valid, calculates and sets the `age` and `ageInMonths` fields.
 
 A Date of Birth is considered valid if it is a valid date with the format `YYYY-MM-DD` or `YYYYMMDD` and is not in the future.
 If the Date of Birth is entered as `YYYYMMDD` it is reformatted as `YYYY-MM-DD` for consistency.
@@ -46,3 +46,4 @@ Example
 | w75KJ2mc4zz  | dateOfBirth  | Text   |
 | zDhUuAYrxNC  | age          | Text   |
 | zDhUuAYrxNC  | isDobKnown   | Yes/No |
+| zDhUuAYrxNC  | ageInMonths  | Text   |

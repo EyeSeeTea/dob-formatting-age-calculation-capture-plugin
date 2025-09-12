@@ -1,25 +1,15 @@
 import { calculateAge } from "../utils/calculateAge";
+import { mockCurrentDate } from "./testUtils";
 
 describe("calculateAge", () => {
-  const originalDate = Date;
-
-  const MOCK_DATE_NOW = "2025-05-12T00:00:00Z";
+  const dateMock = mockCurrentDate("2025-05-12T00:00:00Z");
 
   beforeAll(() => {
-    global.Date = class extends Date {
-      constructor(...args: any[]) {
-        if (args.length) {
-          // @ts-ignore
-          super(...args);
-        } else {
-          super(MOCK_DATE_NOW);
-        }
-      }
-    } as typeof Date;
+    dateMock.setup();
   });
 
   afterAll(() => {
-    global.Date = originalDate;
+    dateMock.teardown();
   });
 
   it("should return the correct age for a past date", () => {

@@ -8,6 +8,8 @@ import { calculateDob } from "./utils/calculateDob";
 import { dateToString } from "./utils/dateToString";
 import { useSetError } from "./hooks/useSetError";
 import { useEffectAfterMount } from "./hooks/useEffectAfterMount";
+import { useSetField } from "./hooks/useSetField";
+import { calculateAgeInMonths } from "./utils/calculateAgeInMonths";
 
 const MAX_AGE = 125; // Maximum age allowed
 const MIN_DOB = new Date("1900-01-01").getTime(); // Minimum date of birth allowed
@@ -21,43 +23,24 @@ const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
 
   const setError = useSetError(propsFromParent);
 
-  const setAge = React.useCallback(
-    (age: string | undefined) => {
-      propsFromParent.setFieldValue({
-        fieldId: PluginFields.age,
-        value: age ?? "",
-        options: {
-          valid: true,
-          touched: true,
-        },
-      });
-    },
-    [propsFromParent]
-  );
-
-  const setDob = React.useCallback(
-    (dob: string | undefined) => {
-      propsFromParent.setFieldValue({
-        fieldId: PluginFields.dateOfBirth,
-        value: dob ?? "",
-        options: {
-          valid: true,
-          touched: true,
-        },
-      });
-    },
-    [propsFromParent]
+  const setAge = useSetField<string>(propsFromParent, PluginFields.age);
+  const setDob = useSetField<string>(propsFromParent, PluginFields.dateOfBirth);
+  const setAgeInMonths = useSetField<string>(
+    propsFromParent,
+    PluginFields.ageInMonths
   );
 
   useEffectAfterMount(() => {
-    // reset age and dateOfBirth when isDobKnown is undefined
+    // reset age, ageInMonths and dateOfBirth when isDobKnown is undefined
     if (isDobKnown === undefined) {
       setDob(undefined);
       setAge(undefined);
+      setAgeInMonths(undefined);
     }
-  }, [isDobKnown, setAge, setDob]);
+  }, [isDobKnown, setAge, setAgeInMonths, setDob]);
 
   React.useEffect(() => {
+    // handle changes in dateOfBirth when isDobKnown is true
     if (isDobKnown === undefined || isDobKnown === "false") {
       return;
     }
@@ -87,13 +70,14 @@ const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
       );
     } else {
       setDob(formattedDateOfBirth);
-      setAge(
-        calculateAge(formattedDateOfBirth) + "" // setting an integer seems to cause an error
-      );
+      // setting an integer as value seems to cause an error
+      setAge(calculateAge(formattedDateOfBirth) + "");
+      setAgeInMonths(calculateAgeInMonths(formattedDateOfBirth) + "");
     }
-  }, [dateOfBirth, isDobKnown, setError, setDob, setAge]);
+  }, [dateOfBirth, isDobKnown, setError, setDob, setAge, setAgeInMonths]);
 
   React.useEffect(() => {
+    // handle changes in age when isDobKnown is false
     if (isDobKnown === undefined || isDobKnown === "true") {
       return;
     }
