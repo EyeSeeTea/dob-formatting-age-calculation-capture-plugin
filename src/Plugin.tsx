@@ -94,8 +94,9 @@ const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
     } else if (ageParsed > MAX_AGE) {
       setError(PluginFields.age, age, i18n.t("Age cannot be greater than 125"));
     } else {
-      const calculatedDob = calculateDob(ageParsed);
-      setDob(dateToString(calculatedDob));
+      const formattedEstimatedDob = dateToString(calculateDob(ageParsed));
+      setDob(formattedEstimatedDob);
+      setAgeInMonths(calculateAgeInMonths(formattedEstimatedDob) + "");
     }
   }, [age, isDobKnown, setError, setDob]);
 
