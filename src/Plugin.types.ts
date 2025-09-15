@@ -48,6 +48,7 @@ export const PluginFields = {
   dateOfBirth: "dateOfBirth",
   age: "age",
   isDobKnown: "isDobKnown",
+  ageInMonths: "ageInMonths",
 } as const;
 
 export type PluginField = (typeof PluginFields)[keyof typeof PluginFields];

@@ -1,25 +1,16 @@
 import { calculateDob } from "./calculateDob";
+import { mockCurrentDate } from "./testUtils";
 
 describe("calculateDob", () => {
-  const originalDate = Date;
-
   const MOCK_DATE_NOW = "2025-06-24T00:00:00Z";
+  const dateMock = mockCurrentDate(MOCK_DATE_NOW);
 
   beforeAll(() => {
-    global.Date = class extends Date {
-      constructor(...args: any[]) {
-        if (args.length) {
-          // @ts-ignore
-          super(...args);
-        } else {
-          super(MOCK_DATE_NOW);
-        }
-      }
-    } as typeof Date;
+    dateMock.setup();
   });
 
   afterAll(() => {
-    global.Date = originalDate;
+    dateMock.teardown();
   });
 
   it("should return January 1st of the correct birth year for a given age", () => {
