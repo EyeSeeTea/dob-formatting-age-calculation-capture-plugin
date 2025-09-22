@@ -35,10 +35,10 @@ const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
 
   const formatErrors = {
     [DateFormat.YYYYMMDD]: i18n.t(
-      "Invalid date format, please use YYYY-MM-DD or YYYYMMDD"
+      "Invalid date. Please use format YYYY-MM-DD or YYYYMMDD and ensure the date exists and is valid"
     ),
     [DateFormat.MMDDYYYY]: i18n.t(
-      "Invalid date format, please use MM-DD-YYYY, MMDDYYYY or YYYY-MM-DD"
+      "Invalid date. Please use format MM-DD-YYYY, MMDDYYYY or YYYY-MM-DD and ensure the date exists and is valid"
     ),
   };
 

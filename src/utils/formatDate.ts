@@ -1,5 +1,8 @@
 import { DateFormat } from "../DateFormat";
 
+const YYYY_MM_DD_REGEX = /^(\d{4})-(\d{2})-(\d{2})$/;
+const MM_DD_YYYY_REGEX = /^(\d{2})-(\d{2})-(\d{4})$/;
+
 const formatters = {
   [DateFormat.YYYYMMDD]: formatDateYYYYMMDD,
   [DateFormat.MMDDYYYY]: formatDateMMDDYYYY,
@@ -28,7 +31,7 @@ export function formatDateYYYYMMDD(dateString: string): string | null {
     const month = dateString.slice(4, 6);
     const day = dateString.slice(6, 8);
     dateString = `${year}-${month}-${day}`;
-  } else if (!/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+  } else if (!YYYY_MM_DD_REGEX.test(dateString)) {
     return null;
   }
   if (!dateStringIsValid(dateString)) {
@@ -54,10 +57,10 @@ export function formatDateMMDDYYYY(dateString: string): string | null {
     const day = dateString.slice(2, 4);
     const year = dateString.slice(4, 8);
     dateString = `${year}-${month}-${day}`;
-  } else if (/^\d{2}-\d{2}-\d{4}$/.test(dateString)) {
+  } else if (MM_DD_YYYY_REGEX.test(dateString)) {
     const [month, day, year] = dateString.split("-");
     dateString = `${year}-${month}-${day}`;
-  } else if (!/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+  } else if (!YYYY_MM_DD_REGEX.test(dateString)) {
     return null;
   }
   if (!dateStringIsValid(dateString)) {
@@ -72,7 +75,13 @@ export function formatDateMMDDYYYY(dateString: string): string | null {
  * @param dateString - date in YYYY-MM-DD format
  */
 function dateStringIsValid(dateString: string): boolean {
-  const [year, month, day] = dateString.split("-").map(Number);
+  const match = dateString.match(YYYY_MM_DD_REGEX);
+  if (!match) {
+    return false;
+  }
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
   if (isNaN(year) || isNaN(month) || isNaN(day)) {
     return false;
   }
