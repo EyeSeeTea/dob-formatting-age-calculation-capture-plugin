@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-06-24T13:15:46.052Z\n"
-"PO-Revision-Date: 2025-06-24T13:15:46.052Z\n"
+"POT-Creation-Date: 2025-09-22T15:04:51.679Z\n"
+"PO-Revision-Date: 2025-09-22T15:04:51.680Z\n"
 
 msgid "Invalid date format, please use YYYY-MM-DD or YYYYMMDD"
 msgstr "Invalid date format, please use YYYY-MM-DD or YYYYMMDD"
@@ -14,8 +14,14 @@ msgstr "Invalid date format, please use YYYY-MM-DD or YYYYMMDD"
 msgid "Date of Birth cannot be in the future"
 msgstr "Date of Birth cannot be in the future"
 
+msgid "Date of Birth cannot be previous to 1900-01-01"
+msgstr "Date of Birth cannot be previous to 1900-01-01"
+
 msgid "Age must be a valid positive integer number"
 msgstr "Age must be a valid positive integer number"
+
+msgid "Age cannot be greater than 125"
+msgstr "Age cannot be greater than 125"
 
 msgctxt "Application title"
 msgid "__MANIFEST_APP_TITLE"
