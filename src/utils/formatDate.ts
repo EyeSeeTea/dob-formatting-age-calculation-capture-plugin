@@ -31,13 +31,9 @@ export function formatDateYYYYMMDD(dateString: string): string | null {
   } else if (!/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
     return null;
   }
-  const date = new Date(dateString);
-
-  // Check if the date is valid
-  if (isNaN(date.getTime())) {
+  if (!dateStringIsValid(dateString)) {
     return null;
   }
-
   return dateString;
 }
 
@@ -64,13 +60,26 @@ export function formatDateMMDDYYYY(dateString: string): string | null {
   } else if (!/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
     return null;
   }
-
-  const date = new Date(dateString);
-
-  // Check if the date is valid
-  if (isNaN(date.getTime())) {
+  if (!dateStringIsValid(dateString)) {
     return null;
   }
 
   return dateString;
+}
+
+/**
+ * Checks if a date is valid (returns false for invalid dates like 2025-02-29 or 2025-04-31)
+ * @param dateString - date in YYYY-MM-DD format
+ */
+function dateStringIsValid(dateString: string): boolean {
+  const [year, month, day] = dateString.split("-").map(Number);
+  if (isNaN(year) || isNaN(month) || isNaN(day)) {
+    return false;
+  }
+  const date = new Date(year, month - 1, day);
+  return (
+    date.getFullYear() === year &&
+    date.getMonth() + 1 === month &&
+    date.getDate() === day
+  );
 }

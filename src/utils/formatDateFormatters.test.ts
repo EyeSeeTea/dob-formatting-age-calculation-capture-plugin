@@ -19,10 +19,14 @@ describe("formatDateFormatters", () => {
 
     it("should return null for an invalid date in YYYYMMDD format", () => {
       expect(formatDateYYYYMMDD("20251301")).toBeNull();
+      expect(formatDateYYYYMMDD("20250229")).toBeNull();
+      expect(formatDateYYYYMMDD("20250431")).toBeNull();
     });
 
     it("should return null for an invalid date in YYYY-MM-DD format", () => {
       expect(formatDateYYYYMMDD("2025-13-01")).toBeNull();
+      expect(formatDateYYYYMMDD("2025-02-29")).toBeNull();
+      expect(formatDateYYYYMMDD("2025-04-31")).toBeNull();
     });
   });
 
@@ -37,6 +41,8 @@ describe("formatDateFormatters", () => {
 
     it("should return null for invalid MMDDYYYY format", () => {
       expect(formatDateMMDDYYYY("0704202")).toBeNull();
+      expect(formatDateMMDDYYYY("02292025")).toBeNull();
+      expect(formatDateMMDDYYYY("04312025")).toBeNull();
     });
 
     it("should return null for invalid MM-DD-YYYY format", () => {
@@ -45,6 +51,8 @@ describe("formatDateFormatters", () => {
 
     it("should return null for invalid date", () => {
       expect(formatDateMMDDYYYY("13-32-2025")).toBeNull();
+      expect(formatDateMMDDYYYY("02-29-2025")).toBeNull();
+      expect(formatDateMMDDYYYY("04-31-2025")).toBeNull();
       expect(formatDateMMDDYYYY("13322025")).toBeNull();
       expect(formatDateMMDDYYYY("00012025")).toBeNull();
     });
@@ -55,6 +63,8 @@ describe("formatDateFormatters", () => {
 
     it("should return null for invalid YYYY-MM-DD format", () => {
       expect(formatDateMMDDYYYY("2025-13-04")).toBeNull();
+      expect(formatDateMMDDYYYY("2025-02-29")).toBeNull();
+      expect(formatDateMMDDYYYY("2025-04-31")).toBeNull();
     });
   });
 });
