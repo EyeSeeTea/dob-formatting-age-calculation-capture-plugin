@@ -1,3 +1,5 @@
+const YYYY_MM_DD_REGEX = /^(\d{4})-(\d{2})-(\d{2})$/;
+
 /**
  * Validates and formats a date string.
  *
@@ -15,15 +17,34 @@ export function formatDate(dateString: string): string | null {
     const month = dateString.slice(4, 6);
     const day = dateString.slice(6, 8);
     dateString = `${year}-${month}-${day}`;
-  } else if (!/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+  } else if (!YYYY_MM_DD_REGEX.test(dateString)) {
     return null;
   }
-  const date = new Date(dateString);
-
-  // Check if the date is valid
-  if (isNaN(date.getTime())) {
+  if (!dateStringIsValid(dateString)) {
     return null;
   }
-
   return dateString;
+}
+
+/**
+ * Checks if a date is valid (returns false for invalid dates like 2025-02-29 or 2025-04-31)
+ * @param dateString - date in YYYY-MM-DD format
+ */
+function dateStringIsValid(dateString: string): boolean {
+  const match = dateString.match(YYYY_MM_DD_REGEX);
+  if (!match) {
+    return false;
+  }
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  if (isNaN(year) || isNaN(month) || isNaN(day)) {
+    return false;
+  }
+  const date = new Date(year, month - 1, day);
+  return (
+    date.getFullYear() === year &&
+    date.getMonth() + 1 === month &&
+    date.getDate() === day
+  );
 }
