@@ -52,7 +52,9 @@ const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
       setError(
         PluginFields.dateOfBirth,
         dateOfBirth,
-        i18n.t("Invalid date format, please use YYYY-MM-DD or YYYYMMDD")
+        i18n.t(
+          "Invalid date. Please use format YYYY-MM-DD or YYYYMMDD and ensure the date exists and is valid"
+        )
       );
     } else if (
       new Date(formattedDateOfBirth).getTime() > new Date().getTime()
