@@ -11,3 +11,20 @@ export function calculateDob(age: number): Date {
   const birthYear = currentYear - age;
   return new Date(birthYear, 0, 1); // January 1st of the birth year
 }
+
+/**
+ * Calculates the date of birth given an age expressed in months.
+ * Returns the first day of the month that makes the age in months valid.
+ */
+export function calculateDobFromAgeInMonths(ageInMonths: number): Date {
+  if (ageInMonths < 0) {
+    throw new Error("Age in months cannot be negative");
+  }
+  const currentDate = new Date();
+  const birthDate = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth() - ageInMonths,
+    1
+  );
+  return birthDate;
+}
