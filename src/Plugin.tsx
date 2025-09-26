@@ -1,6 +1,10 @@
 import "./index.css";
 import React from "react";
-import { IDataEntryPluginProps, PluginFields } from "./Plugin.types";
+import {
+  IDataEntryPluginProps,
+  PluginFields,
+  PluginValues,
+} from "./Plugin.types";
 import { formatDate } from "./utils/formatDate";
 import i18n from "@dhis2/d2-i18n";
 import { calculateAge } from "./utils/calculateAge";
@@ -22,12 +26,7 @@ const MAX_CALC_AGE_IN_MONTHS_YEARS = 5; // Maximum age in years to calculate age
 
 const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
   const { isDobKnown, age, dateOfBirth, ageInMonths } =
-    propsFromParent.values as {
-      isDobKnown?: "true" | "false" | undefined;
-      age?: string;
-      dateOfBirth?: string;
-      ageInMonths?: string;
-    };
+    propsFromParent.values as PluginValues;
 
   const setError = useSetError(propsFromParent);
 
@@ -113,19 +112,16 @@ const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
     } else if (ageParsed > MAX_AGE) {
       setError(PluginFields.age, age, i18n.t("Age cannot be greater than 125"));
     } else {
-      const formattedEstimatedDob = dateToString(calculateDob(ageParsed));
+      const sameAgeAsDob =
+        dateOfBirth !== undefined &&
+        ageParsed !== undefined &&
+        hasSameAge(dateOfBirth, dateToString(calculateDob(ageParsed)));
+      const formattedEstimatedDob = sameAgeAsDob
+        ? dateOfBirth
+        : dateToString(calculateDob(ageParsed));
       setDob(formattedEstimatedDob);
       if (ageParsed <= MAX_CALC_AGE_IN_MONTHS_YEARS) {
-        if (
-          !ageInMonths ||
-          !hasSameAge(
-            formattedEstimatedDob,
-            dateToString(calculateDobFromAgeInMonths(parseInt(ageInMonths)))
-          )
-        ) {
-          // only set if needed, prefer existing ageInMonths if same age for more granularity
-          setAgeInMonths(calculateAgeInMonths(formattedEstimatedDob) + "");
-        }
+        setAgeInMonths(calculateAgeInMonths(formattedEstimatedDob) + "");
       } else {
         setAgeInMonths("");
       }
