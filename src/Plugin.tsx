@@ -15,10 +15,10 @@ import {
 import { dateToString } from "./utils/dateToString";
 import { useSetError } from "./hooks/useSetError";
 import { useEffectAfterMount } from "./hooks/useEffectAfterMount";
-import { useSetField } from "./hooks/useSetField";
 import { calculateAgeInMonths } from "./utils/calculateAgeInMonths";
 import usePrevious from "./hooks/usePrevious";
 import { hasSameAge } from "./utils/hasSameAge";
+import { useSetFields } from "./hooks/useSetFields";
 
 const MAX_AGE = 125; // Maximum age allowed
 const MIN_DOB = new Date("1900-01-01").getTime(); // Minimum date of birth allowed
@@ -27,14 +27,10 @@ const MAX_CALC_AGE_IN_MONTHS_YEARS = 5; // Maximum age in years to calculate age
 const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
   const { isDobKnown, age, dateOfBirth, ageInMonths } =
     propsFromParent.values as PluginValues;
-
   const setError = useSetError(propsFromParent);
 
-  const setAge = useSetField<string>(propsFromParent, PluginFields.age);
-  const setDob = useSetField<string>(propsFromParent, PluginFields.dateOfBirth);
-  const setAgeInMonths = useSetField<string>(
-    propsFromParent,
-    PluginFields.ageInMonths
+  const { pluginState, setFields } = useSetFields(
+    propsFromParent.setFieldValue
   );
 
   const previousAge = usePrevious(age);
@@ -44,18 +40,26 @@ const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
   useEffectAfterMount(() => {
     // reset age, ageInMonths and dateOfBirth when isDobKnown is undefined
     if (isDobKnown === undefined) {
-      setDob(undefined);
-      setAge(undefined);
-      setAgeInMonths(undefined);
+      setFields({
+        [PluginFields.age]: undefined,
+        [PluginFields.ageInMonths]: undefined,
+        [PluginFields.dateOfBirth]: undefined,
+      });
     }
-  }, [isDobKnown, setAge, setAgeInMonths, setDob]);
+  }, [isDobKnown, setFields]);
 
   React.useEffect(() => {
     // handle changes in dateOfBirth when isDobKnown is true
     if (isDobKnown === undefined || isDobKnown === "false") {
-      return;
+      return setFields({
+        [PluginFields.dateOfBirth]: pluginState.current.dateOfBirth,
+      });
     }
-    if (!dateOfBirth || dateOfBirth === previousDateOfBirth) {
+    if (
+      !dateOfBirth ||
+      dateOfBirth === pluginState.current.dateOfBirth ||
+      dateOfBirth === previousDateOfBirth
+    ) {
       return;
     }
     const formattedDateOfBirth = formatDate(dateOfBirth);
@@ -82,24 +86,31 @@ const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
         i18n.t("Date of Birth cannot be previous to 1900-01-01")
       );
     } else {
-      setDob(formattedDateOfBirth);
       const ageCalculated = calculateAge(formattedDateOfBirth);
-      // setting an integer as value seems to cause an error
-      setAge(ageCalculated + "");
-      if (ageCalculated <= MAX_CALC_AGE_IN_MONTHS_YEARS) {
-        setAgeInMonths(calculateAgeInMonths(formattedDateOfBirth) + "");
-      } else {
-        setAgeInMonths("");
-      }
+      const calculatedAgeInMonths =
+        ageCalculated <= MAX_CALC_AGE_IN_MONTHS_YEARS
+          ? calculateAgeInMonths(formattedDateOfBirth)
+          : "";
+      setFields({
+        [PluginFields.age]: ageCalculated + "",
+        [PluginFields.ageInMonths]: calculatedAgeInMonths + "",
+        [PluginFields.dateOfBirth]: formattedDateOfBirth,
+      });
     }
-  }, [dateOfBirth, isDobKnown, setError, setDob, setAge, setAgeInMonths]);
+  }, [dateOfBirth, setError, setFields]);
 
   React.useEffect(() => {
     // handle changes in age when isDobKnown is false
     if (isDobKnown === undefined || isDobKnown === "true") {
-      return;
+      return setFields({
+        [PluginFields.age]: pluginState.current.age,
+      });
     }
-    if (age === undefined || age === previousAge) {
+    if (
+      age === undefined ||
+      age === pluginState.current.age ||
+      age === previousAge
+    ) {
       return;
     }
     const ageParsed = parseInt(age);
@@ -119,21 +130,30 @@ const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
       const formattedEstimatedDob = sameAgeAsDob
         ? dateOfBirth
         : dateToString(calculateDob(ageParsed));
-      setDob(formattedEstimatedDob);
-      if (ageParsed <= MAX_CALC_AGE_IN_MONTHS_YEARS) {
-        setAgeInMonths(calculateAgeInMonths(formattedEstimatedDob) + "");
-      } else {
-        setAgeInMonths("");
-      }
+      const calculatedAgeInMonths =
+        ageParsed <= MAX_CALC_AGE_IN_MONTHS_YEARS
+          ? calculateAgeInMonths(formattedEstimatedDob)
+          : "";
+      setFields({
+        [PluginFields.dateOfBirth]: formattedEstimatedDob,
+        [PluginFields.ageInMonths]: calculatedAgeInMonths + "",
+        [PluginFields.age]: ageParsed + "",
+      });
     }
-  }, [age, ageInMonths, isDobKnown, setError, setDob, setAgeInMonths]);
+  }, [age, ageInMonths, setError, setFields]);
 
   React.useEffect(() => {
     // handle changes in ageInMonths when isDobKnown is false
     if (isDobKnown === undefined || isDobKnown === "true") {
-      return;
+      return setFields({
+        [PluginFields.ageInMonths]: pluginState.current.ageInMonths,
+      });
     }
-    if (ageInMonths === undefined || ageInMonths === previousAgeInMonths) {
+    if (
+      ageInMonths === undefined ||
+      ageInMonths === pluginState.current.ageInMonths ||
+      ageInMonths === previousAgeInMonths
+    ) {
       return;
     }
     const ageInMonthsParsed = parseInt(ageInMonths);
@@ -150,10 +170,13 @@ const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
       const formattedEstimatedDob = dateToString(
         calculateDobFromAgeInMonths(ageInMonthsParsed)
       );
-      setDob(formattedEstimatedDob);
-      setAge(calculateAge(formattedEstimatedDob) + "");
+      setFields({
+        [PluginFields.dateOfBirth]: formattedEstimatedDob,
+        [PluginFields.age]: calculateAge(formattedEstimatedDob) + "",
+        [PluginFields.ageInMonths]: ageInMonthsParsed + "",
+      });
     }
-  }, [ageInMonths, isDobKnown, setError, setDob, setAge]);
+  }, [ageInMonths, setError, setFields]);
 
   return <div></div>;
 };
