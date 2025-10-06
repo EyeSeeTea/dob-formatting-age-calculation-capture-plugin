@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-09-22T15:30:26.145Z\n"
-"PO-Revision-Date: 2025-09-22T15:30:26.145Z\n"
+"POT-Creation-Date: 2025-09-22T17:17:18.236Z\n"
+"PO-Revision-Date: 2025-09-22T17:17:18.236Z\n"
 
 msgid ""
 "Invalid date. Please use format YYYY-MM-DD or YYYYMMDD and ensure the date "
@@ -26,6 +26,9 @@ msgstr "Age must be a valid positive integer number"
 
 msgid "Age cannot be greater than 125"
 msgstr "Age cannot be greater than 125"
+
+msgid "Age in months must be a valid positive integer number"
+msgstr "Age in months must be a valid positive integer number"
 
 msgctxt "Application title"
 msgid "__MANIFEST_APP_TITLE"

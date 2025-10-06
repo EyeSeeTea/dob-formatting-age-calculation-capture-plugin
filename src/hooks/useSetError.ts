@@ -31,7 +31,7 @@ export function useSetError(propsFromParent: IDataEntryPluginProps) {
         },
       });
     },
-    [propsFromParent]
+    [propsFromParent.setFieldValue, propsFromParent.errors]
   );
   return setError;
 }
