@@ -6,10 +6,11 @@ import {
 } from "../Plugin.types";
 
 export function useSetFields(
-  setFieldValue: IDataEntryPluginProps["setFieldValue"]
+  setFieldValue: IDataEntryPluginProps["setFieldValue"],
+  initialValues?: Partial<IDataEntryPluginProps["values"]>,
 ) {
   const pluginState = React.useRef<Partial<IDataEntryPluginProps["values"]>>(
-    {}
+    initialValues ?? {},
   );
   const setFields = React.useCallback(
     (fields: Partial<IDataEntryPluginProps["values"]>) => {

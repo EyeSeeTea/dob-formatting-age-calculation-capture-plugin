@@ -30,7 +30,8 @@ const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
   const setError = useSetError(propsFromParent);
 
   const { pluginState, setFields } = useSetFields(
-    propsFromParent.setFieldValue
+    propsFromParent.setFieldValue,
+    propsFromParent.values,
   );
 
   const previousAge = usePrevious(age);
