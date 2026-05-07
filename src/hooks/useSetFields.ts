@@ -12,6 +12,11 @@ export function useSetFields(
   const pluginState = React.useRef<Partial<IDataEntryPluginProps["values"]>>(
     initialValues ?? {},
   );
+  const setFieldValueRef = React.useRef(setFieldValue);
+  React.useEffect(() => {
+    setFieldValueRef.current = setFieldValue;
+  }, [setFieldValue]);
+
   const setFields = React.useCallback(
     (fields: Partial<IDataEntryPluginProps["values"]>) => {
       Object.entries(fields).forEach(([fieldId, value]) => {
@@ -21,7 +26,7 @@ export function useSetFields(
           return;
         }
         pluginState.current[fieldId as PluginField] = value;
-        setFieldValue({
+        setFieldValueRef.current({
           fieldId: fieldId as PluginField,
           value: value ?? "",
           options: {
@@ -31,7 +36,7 @@ export function useSetFields(
         });
       });
     },
-    [setFieldValue]
+    []
   );
   return { setFields, pluginState };
 }

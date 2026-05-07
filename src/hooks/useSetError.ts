@@ -2,17 +2,22 @@ import React from "react";
 import { IDataEntryPluginProps, PluginField } from "../Plugin.types";
 
 export function useSetError(propsFromParent: IDataEntryPluginProps) {
+  const propsRef = React.useRef(propsFromParent);
+  React.useEffect(() => {
+    propsRef.current = propsFromParent;
+  }, [propsFromParent]);
+
   const setError = React.useCallback(
     (field: PluginField, value: string, error: string) => {
       // return early if the field already has an error to avoid infinite loops later
-      if (propsFromParent.errors[field]) {
+      if (propsRef.current.errors[field]) {
         return;
       }
 
       // HACK: set the value twice with different values to trigger the error message
       // If this is not done, the error message will be show only after blurring the next field
       // tested with Capture 101.32.5
-      propsFromParent.setFieldValue({
+      propsRef.current.setFieldValue({
         fieldId: field,
         value: value + " ",
         options: {
@@ -21,7 +26,7 @@ export function useSetError(propsFromParent: IDataEntryPluginProps) {
           error,
         },
       });
-      propsFromParent.setFieldValue({
+      propsRef.current.setFieldValue({
         fieldId: field,
         value: value,
         options: {
@@ -31,7 +36,7 @@ export function useSetError(propsFromParent: IDataEntryPluginProps) {
         },
       });
     },
-    [propsFromParent.setFieldValue, propsFromParent.errors]
+    []
   );
   return setError;
 }
