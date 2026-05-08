@@ -10,6 +10,12 @@ const dateFormat: DateFormat = DateFormat.MMDDYYYY; // TODO: make this configura
 
 const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
   const setError = (value: string, error: string) => {
+    // Return early if the field already shows this same error, to avoid an infinite loop
+    const currentErrors = propsFromParent.errors[PluginFields.dateOfBirth];
+    if (currentErrors?.includes(error)) {
+      return;
+    }
+
     // HACK: set the value twice with different values to trigger the error message
     // If this is not done, the error message will be show only after blurring the next field
     // tested with Capture 101.32.5
@@ -35,15 +41,15 @@ const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
 
   const formatErrors = {
     [DateFormat.YYYYMMDD]: i18n.t(
-      "Invalid date. Please use format YYYY-MM-DD or YYYYMMDD and ensure the date exists and is valid"
+      "Invalid date. Please use format YYYY-MM-DD or YYYYMMDD and ensure the date exists and is valid",
     ),
     [DateFormat.MMDDYYYY]: i18n.t(
-      "Invalid date. Please use format MM-DD-YYYY, MMDDYYYY or YYYY-MM-DD and ensure the date exists and is valid"
+      "Invalid date. Please use format MM-DD-YYYY, MMDDYYYY or YYYY-MM-DD and ensure the date exists and is valid",
     ),
   };
 
   React.useEffect(() => {
-    const inputDateOfBirth = propsFromParent.values.dateOfBirth;
+    const inputDateOfBirth = propsFromParent.values.dateOfBirth?.trim() ?? "";
     const formattedDateOfBirth = formatDate(dateFormat, inputDateOfBirth);
     if (inputDateOfBirth) {
       if (!formattedDateOfBirth) {
@@ -53,7 +59,7 @@ const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
       ) {
         setError(
           inputDateOfBirth,
-          i18n.t("Date of Birth cannot be in the future")
+          i18n.t("Date of Birth cannot be in the future"),
         );
       } else {
         propsFromParent.setFieldValue({
