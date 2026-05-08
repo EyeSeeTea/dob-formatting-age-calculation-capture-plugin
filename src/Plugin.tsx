@@ -25,8 +25,13 @@ const MIN_DOB = new Date("1900-01-01").getTime(); // Minimum date of birth allow
 const MAX_CALC_AGE_IN_MONTHS_YEARS = 5; // Maximum age in years to calculate age in months
 
 const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
-  const { isDobKnown, age, dateOfBirth, ageInMonths } =
-    propsFromParent.values as PluginValues;
+  const rawValues = propsFromParent.values as PluginValues;
+  const isDobKnown = rawValues.isDobKnown;
+  // Trim string inputs so the trailing-space artifact from the setError HACK
+  // (see useSetError) can't pile up across re-runs or leak into validators.
+  const age = rawValues.age?.trim();
+  const dateOfBirth = rawValues.dateOfBirth?.trim();
+  const ageInMonths = rawValues.ageInMonths?.trim();
   const setError = useSetError(propsFromParent);
 
   const { pluginState, setFields } = useSetFields(
@@ -93,9 +98,9 @@ const PluginInner = (propsFromParent: IDataEntryPluginProps) => {
           ? calculateAgeInMonths(formattedDateOfBirth)
           : "";
       setFields({
+        [PluginFields.dateOfBirth]: formattedDateOfBirth,
         [PluginFields.age]: ageCalculated + "",
         [PluginFields.ageInMonths]: calculatedAgeInMonths + "",
-        [PluginFields.dateOfBirth]: formattedDateOfBirth,
       });
     }
   }, [dateOfBirth, setError, setFields]);

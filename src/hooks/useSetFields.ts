@@ -19,6 +19,13 @@ export function useSetFields(
 
   const setFields = React.useCallback(
     (fields: Partial<IDataEntryPluginProps["values"]>) => {
+      // TODO: callers rely on dispatch order (e.g. dateOfBirth must commit
+      // before age/ageInMonths so program rules don't blank them out), and
+      // that order currently comes from the object literal's insertion order.
+      // ES2020 guarantees this for non-integer string keys, but it's fragile
+      // — any spread/copy/Map round-trip silently breaks it. Consider changing
+      // the API to take an ordered array, or sorting entries here against a
+      // canonical order defined in PluginFields.
       const entries = Object.entries(fields).filter(([fieldId]) =>
         Object.values(PluginFields).includes(fieldId as PluginField)
       );
