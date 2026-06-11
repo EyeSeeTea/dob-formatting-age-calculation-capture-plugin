@@ -1,7 +1,7 @@
 {
   "name": "dob-formatting-age-calculation-wdk-capture-plugin",
   "author": "EyeSeeTea team",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "description": "",
   "license": "BSD-3-Clause",
   "private": true,
